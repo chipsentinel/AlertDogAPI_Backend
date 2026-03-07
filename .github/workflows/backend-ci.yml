@@ -1,0 +1,96 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - "feature/**"
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: AlertDog
+          MARIADB_USER: admin
+          MARIADB_PASSWORD: "1234"
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mariadb-admin ping -h 127.0.0.1 -u root -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Wait for MariaDB to be ready
+        run: |
+          for i in {1..30}; do
+            if mariadb -h 127.0.0.1 -u root -proot -e "SELECT 1"; then
+              echo "MariaDB is ready"
+              exit 0
+            fi
+            echo "Waiting for MariaDB..."
+            sleep 2
+          done
+          echo "MariaDB did not become ready in time"
+          exit 1
+
+      - name: Initialize database schema and seed data
+        run: mariadb -h 127.0.0.1 -u root -proot AlertDog < db/init.sql
+
+      - name: Start backend
+        run: |
+          npm run start > server.log 2>&1 &
+          echo $! > server.pid
+
+      - name: Wait for backend health endpoint
+        run: |
+          for i in {1..30}; do
+            if curl -fsS http://localhost:3000/ > /dev/null; then
+              echo "Backend is ready"
+              exit 0
+            fi
+            echo "Waiting for backend..."
+            sleep 2
+          done
+          echo "Backend did not start in time"
+          cat server.log
+          exit 1
+
+      - name: Run API smoke tests
+        run: pwsh -File tests/api-smoke-tests.ps1
+
+      - name: Show backend logs on failure
+        if: failure()
+        run: |
+          echo "===== server.log ====="
+          cat server.log
+
+      - name: Stop backend
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) || true
+          fi
