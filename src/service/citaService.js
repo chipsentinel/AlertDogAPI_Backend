@@ -1,6 +1,6 @@
 // 2.3 Crear el servicio para manejar la lógica de negocio relacionada con las citas
 
-const db = require('../config/database').db;
+const db = require('../configuration/database').db;
 
 // Función para obtener todas las citas (opcional, no implementada en el controlador)
 async function findAllCitas() {

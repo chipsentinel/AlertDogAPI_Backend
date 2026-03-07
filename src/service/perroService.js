@@ -1,6 +1,6 @@
 // 2.2 Crear el servicio para manejar la lógica de negocio relacionada con los perros
 
-const db = require('../config/database').db;
+const db = require('../configuration/database').db;
 
 const getDaysFromNow = (date) => {
     const today = new Date();

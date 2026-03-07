@@ -8,10 +8,6 @@ const { findAllCitas,
     modifyCita,
     removeCita } = require('../service/citaService');
 
-
-// Importar funciones de los servicios de perro y cita para obtener información relacionada
-const { findCita, getCitasPorUsuario } = require('../service/citaService');
-
 // Controlador para obtener todos las citas (opcional, no implementada en el router)
 const getCitas = async (req, res) => {
     try {
