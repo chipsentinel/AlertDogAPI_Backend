@@ -2,7 +2,14 @@
 
 // Importar Express y crear una aplicación
 const express = require('express');
+
+const app = express();
 const router = express.Router();
+
+const host = '127.0.0.1';
+const port = 3000;
+
+app.use(express.json());
 
 // Importar rutas
 const { getUsuarios, getUsuario, postUsuario, putUsuario, deleteUsuario } = require('./controllers/usuarioController');
@@ -30,4 +37,20 @@ router.post('/citas', postCita);
 router.put('/citas/:id', putCita);
 router.delete('/citas/:id', deleteCita);
 
-module.exports = router;
+// Ruta base para verificar rápidamente desde el navegador
+router.get('/', (req, res) => {
+	res.json({
+		status: 'ok',
+		message: 'AlertDogAPI en ejecución'
+	});
+});
+
+app.use('/', router);
+
+if (require.main === module) {
+	app.listen(port, host, () => {
+		console.log(`Servidor escuchando en http://${host}:${port}`);
+	});
+}
+
+module.exports = app;
