@@ -138,6 +138,33 @@ El workflow hace lo siguiente:
 7. Ejecuta `tests/api-smoke-tests.ps1`.
 8. Si algo falla, muestra los logs del servidor.
 
+## Docker
+Se agrego dockerizacion completa para backend y base de datos.
+
+Archivos:
+- `Dockerfile`
+- `.dockerignore`
+- `docker-compose.yml`
+
+Servicios incluidos en `docker-compose.yml`:
+1. `db` (MariaDB 11)
+2. `api` (Node.js + Express)
+
+Como ejecutar con Docker:
+```bash
+docker compose up --build
+```
+
+Para detener y eliminar contenedores:
+```bash
+docker compose down
+```
+
+Para detener y eliminar tambien el volumen de datos:
+```bash
+docker compose down -v
+```
+
 ## Postman
 Las colecciones de Postman estan en la carpeta `postman/`:
 - `postman/usuarios.postman_collection.json`
