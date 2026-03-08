@@ -2,6 +2,7 @@
 
 // Importar Express y Yargs para manejar argumentos de línea de comandos
 const express = require('express');
+const cors = require('cors');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 
@@ -12,7 +13,33 @@ const argv = yargs(hideBin(process.argv)).argv;
 const host = argv.host || process.env.HOST || '0.0.0.0';
 const port = Number(argv.port || process.env.PORT || 3000);
 
+const allowedOrigins = (
+	process.env.CORS_ORIGINS ||
+	'http://localhost:5173,http://127.0.0.1:5173'
+)
+	.split(',')
+	.map((origin) => origin.trim())
+	.filter(Boolean);
+
+const corsOptions = {
+	origin(origin, callback) {
+		// Allow server-to-server and local tools requests with no Origin header.
+		if (!origin) {
+			callback(null, true);
+			return;
+		}
+
+		if (allowedOrigins.includes(origin)) {
+			callback(null, true);
+			return;
+		}
+
+		callback(new Error(`Origen no permitido por CORS: ${origin}`));
+	}
+};
+
 app.use(express.json());
+app.use(cors(corsOptions));
 
 // Importar routers por recurso
 const usuarioRoutes = require('./routes/usuarioRoute');
