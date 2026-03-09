@@ -1,58 +1,137 @@
-# AlertDogAPI Backend
+﻿# AlertDogAPI Backend
 
 [![Backend CI](https://github.com/Key-Claw/AlertDogAPI_Backend/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Key-Claw/AlertDogAPI_Backend/actions/workflows/backend-ci.yml)
 
 API REST para gestionar `usuarios`, `perros` y `citas`.
 
-## Documentacion adicional
-- `AUTORIA_BACKEND.md`: tutorial explicativo de autoria tecnica del backend.
-- `DEPLOYMENT_CHECKLIST.md`: guia de verificaciones para despliegue.
+## Autoria del backend
+Este backend fue disenado, estructurado y evolucionado en capas para ser facil de mantener y defender tecnicamente.
+
+Decisiones de autoria clave:
+- Separacion por capas: `routes` -> `controllers` -> `service`.
+- Reglas de dominio extraidas a `src/utils/domainRules.js` para pruebas unitarias limpias.
+- Diferenciacion explicita entre pruebas unitarias y pruebas de integracion.
+- Pipeline CI para validar automaticamente en cada `push` o `pull_request`.
+
+Documentos relacionados:
+- `DEPLOYMENT_CHECKLIST.md`: checklist de salida a produccion.
 
 ## Estado actual (Marzo 2026)
-- Backend operativo en Node + Express con persistencia MariaDB via Knex.
-- CI ejecuta pruebas de smoke, CRUD de usuarios y flujo integrado usuario -> perro -> cita.
-- Se incluyen suites PowerShell para validar reglas de negocio y regresiones funcionales.
+- Backend operativo en Node + Express con persistencia en MariaDB via Knex.
+- Validacion automatica con pruebas unitarias e integracion.
+- Reglas de negocio implementadas para errores `400`, `404` y conflictos `409`.
 
-## Que contiene este repositorio
-Este repositorio contiene solo el backend:
-- Node.js + Express para exponer endpoints HTTP.
-- Knex + MariaDB para persistencia.
-- Tests PowerShell para validacion de API y flujos de negocio.
-- CI en GitHub Actions para validar automaticamente cada push/PR.
-
-## Stack tecnico
-- Node.js
-- Express
-- Knex
-- MariaDB / MySQL
-- js-yaml
-- yargs
+## Tecnologias usadas (que son y para que sirven)
+| Tecnologia | Que es | Para que se usa en este proyecto |
+|---|---|---|
+| Node.js | Motor para ejecutar JavaScript fuera del navegador | Corre el servidor backend |
+| Express | Framework web para Node.js | Define endpoints y maneja requests/responses |
+| Knex | Query builder SQL | Hablar con MariaDB sin repetir SQL en cada archivo |
+| MariaDB | Base de datos relacional | Guardar usuarios, perros y citas |
+| Docker Compose | Orquestador de contenedores | Levantar DB local rapido y consistente |
+| Jest | Framework de testing | Ejecutar pruebas unitarias |
+| PowerShell | Shell de automatizacion en Windows | Ejecutar pruebas de integracion API |
+| GitHub Actions | CI/CD en GitHub | Validar tests en cada push/PR |
+| js-yaml | Parser YAML | Cargar `config.local.yaml` |
+| yargs | Parser de CLI args | Leer parametros de arranque |
+| nodemon | Reinicio automatico | Refrescar servidor al editar codigo |
 
 ## Estructura principal
 ```text
 src/
-  app.js                     # bootstrap de servidor y middlewares
+  app.js                         # entrada del servidor
   configuration/
-    config.js                # carga config YAML/CLI
-    database.js              # inicializacion de Knex
-  controllers/               # capa HTTP
-  routes/                    # definicion de endpoints
-  service/                   # logica de acceso a datos
+    config.js                    # lee YAML y variables de entorno
+    database.js                  # inicializa Knex
+  controllers/                   # capa HTTP
+  routes/                        # define endpoints
+  service/                       # logica de negocio + acceso DB
+  utils/
+    domainRules.js               # reglas puras reutilizables
 db/
-  init.sql                   # esquema + seed
+  init.sql                       # esquema + seed
 tests/
   unit/
-    domainRules.test.js      # unitarias obligatorias (reglas de dominio)
+    domainRules.test.js          # pruebas unitarias
   integration/
-    api-smoke-tests.ps1      # smoke basico
-    api-usuarios-crud-tests.ps1 # CRUD usuarios
+    api-smoke-tests.ps1          # smoke test
+    api-usuarios-crud-tests.ps1  # CRUD usuarios
     api-flujo-perros-citas-tests.ps1 # flujo integrado
 .github/workflows/
-  backend-ci.yml             # pipeline CI
+  backend-ci.yml                 # pipeline CI
 ```
 
+## Tutorial paso a paso (para quien no sabe programar)
+### Paso 1. Instala herramientas
+Necesitas:
+- Node.js LTS
+- Docker Desktop
+- Git
+
+Verifica instalacion:
+```bash
+node -v
+npm -v
+docker -v
+git --version
+```
+
+### Paso 2. Clona el repositorio
+```bash
+git clone https://github.com/Key-Claw/AlertDogAPI_Backend.git
+cd AlertDogAPI_Backend
+```
+
+### Paso 3. Instala dependencias
+```bash
+npm install
+```
+
+### Paso 4. Levanta la base de datos
+```bash
+docker compose up -d db
+```
+
+### Paso 5. Crea tablas y datos iniciales
+En Windows PowerShell:
+```powershell
+Get-Content -Raw .\db\init.sql | docker exec -i alertdog_db mariadb -uadmin -p1234 AlertDog
+```
+
+### Paso 6. Arranca la API
+```bash
+npm run dev
+```
+
+Si todo va bien, la API queda disponible en `http://localhost:3000`.
+
+### Paso 7. Prueba la API sin programar
+Abre navegador y visita:
+- `http://localhost:3000/usuarios`
+- `http://localhost:3000/perros`
+- `http://localhost:3000/citas`
+
+### Paso 8. Ejecuta pruebas automaticas
+Unitarias:
+```bash
+npm run test:unit
+```
+
+Integracion:
+```bash
+npm run test:integration
+```
+
+### Paso 9. Entiende como se construye esta API
+Orden recomendado de lectura:
+1. `src/app.js` (arranque del servidor).
+2. `src/routes/*.js` (URLs disponibles).
+3. `src/controllers/*.js` (entrada/salida HTTP).
+4. `src/service/*.js` (reglas y consultas DB).
+5. `src/utils/domainRules.js` (reglas reutilizables).
+
 ## Configuracion
-La API usa `config.local.yaml` por defecto para DB y servicio.
+Archivo por defecto: `config.local.yaml`.
 
 Ejemplo:
 ```yaml
@@ -67,7 +146,7 @@ service:
   port: 8080
 ```
 
-Tambien soporta variables de entorno (prioridad sobre YAML):
+Variables de entorno soportadas:
 - `DB_HOST`
 - `DB_PORT`
 - `DB_USER`
@@ -75,104 +154,51 @@ Tambien soporta variables de entorno (prioridad sobre YAML):
 - `DB_NAME`
 - `HOST`
 - `PORT`
-- `CORS_ORIGINS` (CSV)
+- `CORS_ORIGINS`
 
 ## Scripts npm
-- `npm run start`: arranca API en `0.0.0.0:3000`.
-- `npm run dev`: arranca API con nodemon.
-- `npm run test:api`: smoke tests de API.
+- `npm run start`: iniciar backend en `0.0.0.0:3000`.
+- `npm run dev`: iniciar backend con recarga automatica.
+- `npm run test:unit`: pruebas unitarias (Jest).
+- `npm run test:api`: smoke test API.
 - `npm run test:api:usuarios`: CRUD de usuarios.
 - `npm run test:api:flujo`: flujo usuario -> perro -> cita.
-- `npm run test:api:all`: ejecuta las tres suites anteriores en cadena.
-- `npm run test:integration`: alias de pruebas de integracion (`test:api:all`).
-- `npm run test:unit`: pruebas unitarias (Jest).
+- `npm run test:api:all`: todas las integraciones.
+- `npm run test:integration`: alias de `test:api:all`.
 
 ## Endpoints
-### Usuarios
+Usuarios:
 - `GET /usuarios`
 - `GET /usuarios/:id`
 - `POST /usuarios`
 - `PUT /usuarios/:id`
 - `DELETE /usuarios/:id`
 
-### Perros
+Perros:
 - `GET /perros`
 - `GET /perros/:id`
 - `POST /perros`
 - `PUT /perros/:id`
 - `DELETE /perros/:id`
 
-### Citas
+Citas:
 - `GET /citas`
 - `GET /citas/:id`
 - `POST /citas`
 - `PUT /citas/:id`
 - `DELETE /citas/:id`
 
-## Reglas de negocio ya cubiertas
-- Citas duplicadas (mismo perro/fecha/hora) devuelven `409`.
-- Citas con campos faltantes devuelven `400`.
-- Recursos inexistentes devuelven `404`.
-
-## Como levantar en local
-1. Crear base `AlertDog`.
-2. Importar `db/init.sql`.
-3. Revisar `config.local.yaml`.
-4. Instalar dependencias:
-```bash
-npm install
-```
-5. Arrancar backend:
-```bash
-npm run dev
-```
-
-## Opcion con Docker (solo DB)
-```bash
-docker compose up -d db
-```
-
-Reiniciar DB y volumen:
-```bash
-docker compose down -v
-docker compose up -d db
-```
-
-Importar SQL manualmente (Windows PowerShell):
-```powershell
-Get-Content -Raw .\db\init.sql | docker exec -i alertdog_db mariadb -uadmin -p1234 AlertDog
-```
-
-## Testing (local)
-Con backend arriba en `http://localhost:3000`:
-```bash
-npm run test:unit
-npm run test:api
-npm run test:api:usuarios
-npm run test:api:flujo
-```
-
-O todo junto:
-```bash
-npm run test:api:all
-```
-
 ## CI (GitHub Actions)
 Workflow: `.github/workflows/backend-ci.yml`
 
-Se ejecuta en:
-- `push` a `main`, `dev`, `feature/**`
-- `pull_request` a `main` y `dev`
-- ejecucion manual (`workflow_dispatch`)
+Valida automaticamente:
+1. Levantar MariaDB de prueba.
+2. Cargar `db/init.sql`.
+3. Iniciar backend.
+4. Ejecutar pruebas de integracion.
+5. Publicar logs cuando algo falla.
 
-Que hace el pipeline:
-1. Levanta MariaDB de prueba.
-2. Carga `db/init.sql`.
-3. Arranca backend.
-4. Ejecuta `test:api`, `test:api:usuarios` y `test:api:flujo`.
-5. Si falla, imprime logs para diagnostico.
-
-## Troubleshooting
-- `ECONNREFUSED 127.0.0.1:3306`: DB apagada o credenciales incorrectas.
-- Errores CORS desde frontend: revisar `CORS_ORIGINS`.
-- Si falla import automatica en Windows + Docker: importar `db/init.sql` manualmente.
+## Troubleshooting rapido
+- `ECONNREFUSED 127.0.0.1:3306`: DB apagada o credenciales malas.
+- `ENOENT package.json`: estas parado en carpeta incorrecta.
+- Fallo CORS con frontend: revisar `CORS_ORIGINS`.
