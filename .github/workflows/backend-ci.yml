@@ -68,21 +68,7 @@ jobs:
       - name: Wait for MariaDB to be ready
         run: |
           for i in {1..30}; do
-<<<<<<< HEAD
             if mysql -h 127.0.0.1 -u root -proot -e "SELECT 1"; then
-=======
-          # Instalar PowerShell para ejecutar scripts .ps1 en runners Linux.
-          - name: Install PowerShell
-            run: |
-              sudo apt-get update
-              sudo apt-get install -y wget apt-transport-https software-properties-common
-              wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb
-              sudo dpkg -i packages-microsoft-prod.deb
-              sudo apt-get update
-              sudo apt-get install -y powershell
-              pwsh --version
-            if mariadb -h 127.0.0.1 -u root -proot -e "SELECT 1"; then
->>>>>>> 1fb2296 (ci: instala PowerShell en runner para ejecutar tests .ps1 en CI)
               echo "MariaDB is ready"
               exit 0
             fi
