@@ -3,9 +3,9 @@
   "scripts": {
     "start": "node src/app.js --config config.local.yaml --host 0.0.0.0 --port 3000",
     "dev": "nodemon src/app.js -- --config config.local.yaml --host 0.0.0.0 --port 3000",
-    "test:api": "powershell -ExecutionPolicy Bypass -File tests/integration/api-smoke-tests.ps1",
-    "test:api:usuarios": "powershell -ExecutionPolicy Bypass -File tests/integration/api-usuarios-crud-tests.ps1",
-    "test:api:flujo": "powershell -ExecutionPolicy Bypass -File tests/integration/api-flujo-perros-citas-tests.ps1",
+    "test:api": "pwsh -ExecutionPolicy Bypass -File tests/integration/api-smoke-tests.ps1",
+    "test:api:usuarios": "pwsh -ExecutionPolicy Bypass -File tests/integration/api-usuarios-crud-tests.ps1",
+    "test:api:flujo": "pwsh -ExecutionPolicy Bypass -File tests/integration/api-flujo-perros-citas-tests.ps1",
     "test:integration": "npm run test:api:all",
     "test:api:all": "npm run test:api && npm run test:api:usuarios && npm run test:api:flujo",
     "test:unit": "jest --runInBand"
