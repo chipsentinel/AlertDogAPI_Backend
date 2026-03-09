@@ -1,0 +1,11 @@
+db:
+  host: 127.0.0.1
+  port: 3306
+  user: admin
+  password: "1234"
+  database: AlertDog
+
+service:
+  port: 8080
+
+# Esta es una configuración de muestra para una aplicación que se conecta a una base de datos MySQL y expone un servicio en un puerto específico.
