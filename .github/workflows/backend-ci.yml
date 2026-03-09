@@ -43,16 +43,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-            # Instalar PowerShell para ejecutar scripts .ps1 en runners Linux.
-            - name: Install PowerShell
-              run: |
-                sudo apt-get update
-                sudo apt-get install -y wget apt-transport-https software-properties-common
-                wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb
-                sudo dpkg -i packages-microsoft-prod.deb
-                sudo apt-get update
-                sudo apt-get install -y powershell
-                pwsh --version
+      # Instalar PowerShell para ejecutar scripts .ps1 en runners Linux.
+      - name: Install PowerShell
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget apt-transport-https software-properties-common
+          wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb
+          sudo dpkg -i packages-microsoft-prod.deb
+          sudo apt-get update
+          sudo apt-get install -y powershell
+          pwsh --version
       # 2) Configurar Node.js con caché de npm para acelerar el pipeline.
       - name: Setup Node.js
         uses: actions/setup-node@v4
