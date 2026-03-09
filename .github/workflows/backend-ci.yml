@@ -34,9 +34,9 @@ jobs:
           - 3306:3306
         options: >-
           --health-cmd="mariadb-admin ping -h 127.0.0.1 -u root -proot"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
+          --health-interval=15s
+          --health-timeout=10s
+          --health-retries=20
 
     steps:
       # 1) Descargar código del repositorio.
@@ -66,6 +66,7 @@ jobs:
             sleep 2
           done
           echo "MariaDB did not become ready in time"
+          docker logs $(docker ps -q --filter ancestor=mariadb:11)
           exit 1
 
       # 5) Crear esquema y datos semilla para los tests.
