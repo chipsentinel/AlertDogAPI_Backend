@@ -20,6 +20,7 @@ Documentos relacionados:
 - Backend operativo en Node + Express con persistencia en MariaDB via Knex.
 - Validacion automatica con pruebas unitarias e integracion.
 - Reglas de negocio implementadas para errores `400`, `404` y conflictos `409`.
+- CORS habilitado para desarrollo local en `5173`, `4173` y `4174`.
 
 ## Tecnologias usadas (que son y para que sirven)
 | Tecnologia | Que es | Para que se usa en este proyecto |
@@ -105,6 +106,9 @@ npm run dev
 
 Si todo va bien, la API queda disponible en `http://localhost:3000`.
 
+Tip rapido:
+- Si prefieres ejecucion estable sin recarga, usa `npm start`.
+
 ### Paso 7. Prueba la API sin programar
 Abre navegador y visita:
 - `http://localhost:3000/usuarios`
@@ -120,6 +124,12 @@ npm run test:unit
 Integracion:
 ```bash
 npm run test:integration
+```
+
+Suite completa recomendada antes de push:
+```bash
+npm run test:unit
+npm run test:api:all
 ```
 
 ### Paso 9. Entiende como se construye esta API
@@ -143,7 +153,7 @@ db:
   database: AlertDog
 
 service:
-  port: 8080
+  port: 3000
 ```
 
 Variables de entorno soportadas:
@@ -201,4 +211,12 @@ Valida automaticamente:
 ## Troubleshooting rapido
 - `ECONNREFUSED 127.0.0.1:3306`: DB apagada o credenciales malas.
 - `ENOENT package.json`: estas parado en carpeta incorrecta.
-- Fallo CORS con frontend: revisar `CORS_ORIGINS`.
+- Fallo CORS con frontend:
+  - Usa frontend en `http://127.0.0.1:5173`, `http://127.0.0.1:4173` o `http://127.0.0.1:4174`.
+  - Si usas otro puerto, define `CORS_ORIGINS` al arrancar.
+
+Ejemplo (PowerShell):
+```powershell
+$env:CORS_ORIGINS = "http://127.0.0.1:5173,http://127.0.0.1:4173,http://127.0.0.1:4174,http://127.0.0.1:4175"
+npm start
+```
