@@ -7,7 +7,8 @@ CREATE TABLE usuario (
     apellido VARCHAR(50) NOT NULL,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    telefono VARCHAR(11) NOT NULL
+    telefono VARCHAR(11) NOT NULL,
+    localidad VARCHAR(100) NOT NULL
 );
 
 
@@ -31,11 +32,11 @@ CREATE TABLE cita (
 );
 
 -- Inserts de ejemplo para usuarios
-INSERT INTO usuario (id, rol, nombre, apellido, password, email, telefono) VALUES
-(1, 1, 'Admin', 'Principal', 'admin123', 'admin@alertdog.com', '0991234567'),
-(2, 0, 'Luis', 'Martinez', 'luis123', 'luis@correo.com', '0981112233'),
-(3, 0, 'Ana', 'Gomez', 'ana123', 'ana@correo.com', '0982223344'),
-(4, 0, 'Carla', 'Ruiz', 'carla123', 'carla@correo.com', '0983334455');
+INSERT INTO usuario (id, rol, nombre, apellido, password, email, telefono, localidad) VALUES
+(1, 1, 'Admin', 'Principal', 'admin123', 'admin@alertdog.com', '0991234567', 'Zaragoza Centro'),
+(2, 0, 'Luis', 'Martinez', 'luis123', 'luis@correo.com', '0981112233', 'Zaragoza Sur'),
+(3, 0, 'Ana', 'Gomez', 'ana123', 'ana@correo.com', '0982223344', 'Zaragoza Delicias'),
+(4, 0, 'Carla', 'Ruiz', 'carla123', 'carla@correo.com', '0983334455', 'Zaragoza Norte');
 
 -- Inserts de ejemplo para perros
 INSERT INTO perro (id, nombre, raza, genero, fecha_de_nacimiento, id_usuario) VALUES

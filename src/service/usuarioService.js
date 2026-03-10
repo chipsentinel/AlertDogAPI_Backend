@@ -38,7 +38,8 @@ const addUsuario = async (usuario) => {
     try {
         const usuarioToSave = {
             ...usuario,
-            rol: normalizeRol(usuario.rol)
+            rol: normalizeRol(usuario.rol),
+            localidad: usuario.localidad ?? null
         };
 
         const [id] = await db('usuario').insert(usuarioToSave);
@@ -76,7 +77,8 @@ const modifyUsuario = async (id, usuario) => {
     try {
         const usuarioToUpdate = {
             ...usuario,
-            rol: normalizeRol(usuario.rol)
+            rol: normalizeRol(usuario.rol),
+            localidad: usuario.localidad ?? null
         };
 
         const updatedRows = await db('usuario').where({ id }).update(usuarioToUpdate);

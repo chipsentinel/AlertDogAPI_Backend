@@ -80,7 +80,7 @@
                                                 ],
                                      "body":  {
                                                   "mode":  "raw",
-                                                  "raw":  "{\n  \"rol\": false,\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Perez\",\n  \"password\": \"juan123\",\n  \"email\": \"juan@correo.com\",\n  \"telefono\": \"0999999999\"\n}"
+                                                  "raw":  "{\n  \"rol\": false,\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Perez\",\n  \"password\": \"juan123\",\n  \"email\": \"juan@correo.com\",\n  \"telefono\": \"0999999999\",\n  \"localidad\": \"Zaragoza Centro\"\n}"
                                               },
                                      "url":  {
                                                  "raw":  "{{baseUrl}}/usuarios",
@@ -118,7 +118,7 @@
                                                 ],
                                      "body":  {
                                                   "mode":  "raw",
-                                                  "raw":  "{\n  \"nombre\": \"Juan Actualizado\",\n  \"telefono\": \"0988888888\"\n}"
+                                                  "raw":  "{\n  \"nombre\": \"Juan Actualizado\",\n  \"telefono\": \"0988888888\"\n,\"localidad\": \"Zaragoza Centro\"\n}"
                                               },
                                      "url":  {
                                                  "raw":  "{{baseUrl}}/usuarios/1",
